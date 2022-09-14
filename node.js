@@ -1,9 +1,11 @@
+const { response } = require("express");
 const sha256 = require("sha256");
 
 class Blockchain {
   constructor() {
-    chain = [];
-    pendingTransactions = [];
+    this.chain = [];
+    this.pendingTransactions = [];
+    this.newBlock(100, 0, 0);
   }
   newBlock(nonce, previousBlockHash, hash) {
     const newBlock = {
@@ -85,4 +87,10 @@ class Blockchain {
 
     return validChain;
   }
+  addTransactionToPendingTransactions(transaction) {
+    this.pendingTransactions.push(transaction);
+    return this.lastBlock()["index"] + 1;
+  }
 }
+
+module.exports = Blockchain;
