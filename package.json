@@ -2,9 +2,13 @@
   "name": "blockchainnode",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"nodemon server.js",
+    "node_1": "",
+    "node_2": "start --port 5002 ",
+    "node_3": "nodemon server.js --port 5003"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +16,7 @@
   "dependencies": {
     "body-parser": "^1.20.0",
     "express": "^4.18.1",
+    "nodemon": "^2.0.20",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "sha256": "^0.2.0",

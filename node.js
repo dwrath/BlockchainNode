@@ -1,10 +1,14 @@
 const { response } = require("express");
 const sha256 = require("sha256");
+const currentNodeUrl = process.argv[3]; // grabs url from position 2 index 1
+const { v1: uuidv1 } = require("uuid");
 
 class Blockchain {
   constructor() {
     this.chain = [];
     this.pendingTransactions = [];
+    this.currentNodeUrl = currentNodeUrl;
+    this.networkNodes = []; // allows each network to be aware of the other nodes
     this.newBlock(100, 0, 0);
   }
   newBlock(nonce, previousBlockHash, hash) {
@@ -27,10 +31,12 @@ class Blockchain {
       recipient: recipient,
       amount: amount,
     };
+    this.pendingTransactions.push(newTransaction);
     return newTransaction;
   }
   hashBlock(previousBlockHash, currentBlockData, nonce) {
     // turns block data to string and hashes the string
+    //let block = this.lastBlock();
     const data =
       previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData);
     const hash = sha256(data);
@@ -39,20 +45,29 @@ class Blockchain {
   lastBlock() {
     return this.chain[this.chain.length - 1];
   }
-  proofOfWork(previousBlockHash, currentBlockData) {
+  proofOfWork(block) {
     let nonce = 0;
-    let hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+    let hash = this.hashBlock(
+      block.previousBlockHash,
+      block.currentBlockData,
+      nonce
+    );
+
     //runs until 1st 4 characters are '0000'
     while (hash.substring(0, 4) !== "0000") {
       nonce++;
-      hash = this.hashBlock(previousBlockHash, currentBlockData, nonce);
+      hash = this.hashBlock(
+        block.previousBlockHash,
+        block.currentBlockData,
+        nonce
+      );
     }
     return nonce;
   }
   validChain(blockchain) {
     let validChain = true;
 
-    for (var i = 1; i < blockchain.length; i++) {
+    for (let i = 1; i < blockchain.length; i++) {
       const currentBlock = blockchain[i];
       const prevBlock = blockchain[i - 1];
       const blockHash = this.hashBlock(
@@ -91,6 +106,39 @@ class Blockchain {
     this.pendingTransactions.push(transaction);
     return this.lastBlock()["index"] + 1;
   }
+  resolveConflicts(networkNodes) {
+    let neighbors = networkNodes;
+    let newChain = null;
+
+    let maxLength = this.chain.length;
+
+    for (node in neighbors) {
+      response = request.get(`http://${node}/blockchain`);
+      if (response.status.code == 200) {
+        let length = response.json()["length"];
+        let chain = response.json()["chain"];
+
+        if (length > maxLength && this.validChain(chain)) {
+          maxLength = length;
+          newChain = chain;
+        }
+        if (newChain) {
+          this.chain = newChain;
+          return true;
+        }
+        return false;
+      }
+    }
+  }
 }
+let blockchain = new Blockchain();
+
+//console.log(blockchain.chain);
+
+//console.log(blockchain.newTransaction("Alice", "Bob", 50));
+
+//console.log(blockchain.lastBlock());
+
+//console.log(blockchain.proofOfWork(blockchain.lastBlock()));
 
 module.exports = Blockchain;
