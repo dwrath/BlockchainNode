@@ -1,20 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import Navbar from "./Navbar";
+
+import { getAccountBalance } from "../../api/index";
 
 function ViewBalance() {
+  let walletsJson = localStorage.getItem("wallets");
+  let wallets = JSON.parse(walletsJson);
+  let account = wallets.account;
+  let address = account.address;
+  let accountBalance = {};
+
+  let [balance, setBalance] = useState("");
+
+  let handleSubmit = (e) => {
+    if (e.target[0].value === address) {
+      getAccountBalance(address).then((res) => {
+        setBalance(res.data);
+      });
+
+      setBalance(accountBalance);
+    }
+  };
   return (
     <div>
+      <Navbar />
       <section id="viewAccountBalance">
         <h1>View Account Balance</h1>
-        Address:{" "}
-        <input
-          type="text"
-          id="textBoxAccountAddress"
-          class="address"
-          value="f3a1e69b6176052fcc4a3248f1c5a91dea308ca9"
-        />
-        <input type="button" id="buttonDisplayBalance" value="Display Balance" />
-        <textarea id="textareaAccountBalanceResult" class="result" readonly="true"></textarea>
+        <form onSubmit={handleSubmit}>
+          Address: <input type="text" id="textBoxAccountAddress" className="address" />
+          <input type="submit" id="buttonDisplayBalance" value="Display Balance" />
+        </form>
       </section>
+      <ul>
+        <li>Total: {balance.total}</li>
+        <li>confirmed: {balance.confirmedBalance}</li>
+        <li>Pending: {balance.pendingBalance}</li>
+      </ul>
     </div>
   );
 }

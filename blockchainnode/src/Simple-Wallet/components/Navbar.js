@@ -20,6 +20,9 @@ function Navbar() {
         <Link to="/send-transaction" id="linkSendTransaction" className="after-login">
           Send Transaction
         </Link>
+        <Link to="/faucet" id="linkFaucet" className="after-login">
+          Faucet
+        </Link>
       </section>
     </div>
   );
