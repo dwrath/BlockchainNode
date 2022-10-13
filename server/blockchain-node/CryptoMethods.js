@@ -1,9 +1,11 @@
 const CryptoJS = require("crypto-js");
 const EC = require("elliptic").ec;
 const secp256k1 = new EC("secp256k1");
+const hashes = require("jshashes");
 
 function publicKeyToAddress(pubKey) {
-  let address = CryptoJS.RIPEMD160(pubKey).toString();
+  let ripemd160 = new hashes.RMD160();
+  address = ripemd160.hex(pubKey).toString();
   return address;
 }
 

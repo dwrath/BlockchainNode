@@ -3,7 +3,6 @@ import Navbar from "./Navbar";
 import { sendTransaction } from "../../api/index";
 import elliptic from "elliptic";
 import Hashes from "jshashes";
-import CryptoJS from "crypto-js";
 
 function SendTransaction() {
   let walletsJson = localStorage.getItem("wallets");
@@ -14,18 +13,16 @@ function SendTransaction() {
   let privKey = account.privKey;
 
   let [recipient, setRecipient] = useState();
-  let [from, setFrom] = useState();
+  //let [from, setFrom] = useState();
   let [transaction, setTransaction] = useState();
   let [value, setValue] = useState();
   let [fee, setFee] = useState();
   let [data, setData] = useState();
   let [transactionHash, setTransactionHash] = useState();
-  let [textarea, setTextArea] = useState(`notSigned`);
+  let [sent, setSent] = useState(`notSigned`);
 
   const secp256k1 = new elliptic.ec("secp256k1");
-  let fromHandler = (e) => {
-    setFrom(e.target.value);
-  };
+
   let recipientHandler = (e) => {
     setRecipient(e.target.value);
   };
@@ -46,10 +43,10 @@ function SendTransaction() {
   let signTransaction = () => {
     //let transactionJSON = JSON.stringify(transaction);
     transaction = {
-      from: from,
+      from: address,
       to: recipient,
-      value: value,
-      fee: fee,
+      value: Number(value),
+      fee: Number(fee),
       dateCreated: new Date().toISOString(),
       data: data,
       senderPubKey: pubKey,
@@ -61,31 +58,28 @@ function SendTransaction() {
   let sendTran = () => {
     sendTransaction(transaction).then((res) => {
       setTransactionHash(res.data);
+      setSent(`Transaction Successfully sent. TransactionHash:  + ${res.data.transactionDataHash}`);
     });
   };
   return (
     <div>
       <Navbar />
+      <h1>Send Transaction</h1>
       <section id="viewSendTransaction">
-        <h1>Send Transaction</h1>
-        <div>
-          <span>From:</span>
-          <input type="text" id="recipientAddress" className="address" onChange={fromHandler} />
-        </div>
         <div>
           <span>Recipient:</span>
           <input type="text" id="recipientAddress" className="address" onChange={recipientHandler} />
         </div>
         <div>
-          <span>Value:</span>
+          <span>Value: </span>
           <input type="number" id="transferValue" onChange={valueHandler} />
         </div>
         <div>
-          <span>Fee:</span>
+          <span>Fee: </span>
           <input type="number" id="miningFee" onChange={feeHandler} />
         </div>
         <div>
-          <span>Data:</span>
+          <span>Data: </span>
           <input type="text" id="tranData" onChange={dataHandler} />
         </div>
         <input type="button" id="buttonSignTransaction" value="Sign Transaction" onClick={signTransaction} />
@@ -97,7 +91,7 @@ function SendTransaction() {
         ></textarea>
 
         <input type="button" id="buttonSendSignedTransaction" value="Send Transaction" onClick={sendTran} />
-        <textarea id="textareaSendTransactionResult" className="result" readOnly={true}></textarea>
+        <textarea id="textareaSendTransactionResult" className="result" value={sent} readOnly={true}></textarea>
       </section>
     </div>
   );

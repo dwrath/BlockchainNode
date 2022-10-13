@@ -11,9 +11,12 @@ function ViewBalance() {
   let accountBalance = {};
 
   let [balance, setBalance] = useState("");
-
-  let handleSubmit = (e) => {
-    if (e.target[0].value === address) {
+  let [userAddress, setUserAddres] = useState();
+  let handleChange = (e) => {
+    setUserAddres(e.target.value);
+  };
+  let handleSubmit = () => {
+    if (userAddress === address) {
       getAccountBalance(address).then((res) => {
         setBalance(res.data);
       });
@@ -26,9 +29,9 @@ function ViewBalance() {
       <Navbar />
       <section id="viewAccountBalance">
         <h1>View Account Balance</h1>
-        <form onSubmit={handleSubmit}>
-          Address: <input type="text" id="textBoxAccountAddress" className="address" />
-          <input type="submit" id="buttonDisplayBalance" value="Display Balance" />
+        <form>
+          Address: <input type="text" id="textBoxAccountAddress" className="address" onChange={handleChange} />
+          <input type="button" id="buttonDisplayBalance" value="Display Balance" onClick={handleSubmit} />
         </form>
       </section>
       <ul>

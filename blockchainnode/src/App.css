@@ -36,3 +36,36 @@
     transform: rotate(360deg);
   }
 }
+li{
+  list-style: none;
+}
+  
+.navbar > *{
+  list-style-type: none;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: rgb(74, 74, 65);
+  
+  
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #111;
+}
+textarea {
+	display: block;
+  margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    width: calc(60% - 5px);
+    height: 150px;
+	  max-width: 100%;
+}
+input {
+  
+    display: inline-block;
+    margin: 5px;
+  }

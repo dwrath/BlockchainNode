@@ -7,7 +7,7 @@ function isValidAddress(address) {
 
 function isValidPublicKey(pubKey) {
   if (typeof pubKey !== "string") return false;
-  return /^[0-9a-f]{64}$/.test(pubKey); //address is 65 characters
+  return /^[0-9a-f]{65}$/.test(pubKey); //address is 65 characters
 }
 
 function isValidTransferValue(val) {

@@ -120,7 +120,7 @@ app.post("/mining/submit-mined-block", (req, res) => {
   let result = node.chain.submitMinedBlock(blockDataHash, dateCreated, nonce, blockHash);
   if (result.errorMsg) res.status(HttpStatus.BAD_REQUEST).json(result);
   else {
-    res.json({ message: `Block accepted, reward paid: ${result.transactions[0].value} microcoins` });
+    res.json({ message: `Block accepted, reward paid: ${result.transactions[0].value} sensecoins` });
     node.notifyPeersAboutNewBlock();
   }
 });

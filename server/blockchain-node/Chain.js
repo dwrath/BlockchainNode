@@ -22,11 +22,7 @@ class Blockchain {
     return this.pendingTransactions;
   }
   getConfirmedTransactions() {
-    let transactions = [];
-    for (let block of this.blocks) {
-      transactions.push.apply(transactions, Block.transactions);
-    }
-    return transactions;
+    return this.blocks;
   }
   getAllTransactions() {
     let transactions = this.getConfirmedTransactions();
@@ -122,7 +118,7 @@ class Blockchain {
     if (!tran.verifySignature()) return { errorMsg: "Invalid signature: " + tranData.senderSignature };
 
     let balances = this.getAccountBalance(tran.from);
-    if (balances.confirmedBalance < tran.value + tran.fee)
+    if (balances.confirmedBalance > tran.value + tran.fee)
       return { errorMsg: "Unsufficient sender balance at address: " + tran.from };
 
     this.pendingTransactions.push(tran);

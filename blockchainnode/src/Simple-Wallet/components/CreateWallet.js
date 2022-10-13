@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "./Navbar";
 import elliptic from "elliptic";
 import Hashes from "jshashes";
+import CryptoJS from "crypto-js";
 
 let wallets = {};
 
@@ -34,6 +35,7 @@ const CreateWallet = () => {
     setAddress(address);
   };
   let getPubKey = (keyPair) => {
+    keyPair = secp256k1.keyFromPrivate(privKey);
     pubKey = keyPair.getPublic().getX().toString(16) + (keyPair.getPublic().getY().isOdd() ? "1" : "0");
     setPubKey(pubKey);
   };

@@ -40,7 +40,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "node": "nodemon ./blockchain-node/Node.js",
-    "miner": "nodemon ./Simple-Miner/Miner.js"
+    "miner": "PORT= 3002 nodemon ./Simple-Miner/Miner.js"
   },
   "eslintConfig": {
     "extends": [

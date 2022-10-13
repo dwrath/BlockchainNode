@@ -7,7 +7,7 @@ function Wallet() {
     <div>
       <main>
         <section id="viewHome">
-          <h1>Simple Wallet </h1>
+          <h1>SenseChain Wallet </h1>
           Welcome to the simple wallet for the SenseChain blockchain network.
         </section>
         <Navbar />
