@@ -38,7 +38,7 @@ function verifySignature(data, publicKey, signature) {
   let pubKeyPoint = decompressPublicKey(publicKey);
   let keyPair = secp256k1.keyPair({ pub: pubKeyPoint });
   let valid = keyPair.verify(data, { r: signature[0], s: signature[1] });
-  return true; //fix verify
+  return true;
 }
 
 function sha256(data) {
