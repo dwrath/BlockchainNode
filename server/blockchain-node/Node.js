@@ -61,7 +61,7 @@ app.get("/blocks/:index", (req, res) => {
   if (block) {
     res.json(block);
   } else {
-    res.status(HttpStatus.NOT_FOUND).json({ errorMsg: "Invalid block index" });
+    res.status(StatusCodes.NOT_FOUND).json({ errorMsg: "Invalid block index" });
   }
 });
 app.get("/transactions/pending", (req, res) => {
@@ -82,7 +82,7 @@ app.get("/address/:address/transactions", (req, res) => {
 app.get("/address/:address/balance", (req, res) => {
   let address = req.params.address;
   let balance = node.chain.getAccountBalance(address);
-  if (balance.errorMsg) res.status(HttpStatus.NOT_FOUND);
+  if (balance.errorMsg) res.status(StatusCodes.NOT_FOUND);
   res.json(balance);
 });
 app.post("/transactions/send", (req, res) => {
@@ -91,10 +91,10 @@ app.post("/transactions/send", (req, res) => {
     // Added a new pending transaction --> broadcast it to all known peers
     node.broadcastTransactionToAllPeers(tran);
 
-    res.status(HttpStatus.CREATED).json({
+    res.status(StatusCodes.CREATED).json({
       transactionDataHash: tran.transactionDataHash,
     });
-  } else res.status(HttpStatus.BAD_REQUEST).json(tran);
+  } else res.status(StatusCodes.BAD_REQUEST).json(tran);
 });
 
 app.get("/peers", (req, res) => {
@@ -118,7 +118,7 @@ app.post("/mining/submit-mined-block", (req, res) => {
   let nonce = req.body.nonce;
   let blockHash = req.body.blockHash;
   let result = node.chain.submitMinedBlock(blockDataHash, dateCreated, nonce, blockHash);
-  if (result.errorMsg) res.status(HttpStatus.BAD_REQUEST).json(result);
+  if (result.errorMsg) res.status(StatusCodes.BAD_REQUEST).json(result);
   else {
     res.json({ message: `Block accepted, reward paid: ${result.transactions[0].value} sensecoins` });
     node.notifyPeersAboutNewBlock();
@@ -128,7 +128,7 @@ app.get("/debug/mine/:minerAddress/:difficulty", (req, res) => {
   let minerAddress = req.params.minerAddress;
   let difficulty = parseInt(req.params.difficulty) || 3;
   let result = node.chain.mineNextBlock(minerAddress, difficulty);
-  if (result.errorMsg) res.status(HttpStatus.BAD_REQUEST);
+  if (result.errorMsg) res.status(StatusCodes.BAD_REQUEST);
   res.json(result);
 });
 app.get("/peers", (req, res) => {
@@ -137,20 +137,20 @@ app.get("/peers", (req, res) => {
 app.post("/peers/connect", (req, res) => {
   let peerUrl = req.body.peerUrl;
   if (peerUrl === undefined)
-    return res.status(HttpStatus.BAD_REQUEST).json({ errorMsg: "Missing 'peerUrl' in the request body" });
+    return res.status(StatusCodes.BAD_REQUEST).json({ errorMsg: "Missing 'peerUrl' in the request body" });
 
   console.log("Trying to connect to peer: " + peerUrl);
   axios
     .get(peerUrl + "/info")
     .then(function (result) {
       if (node.nodeId === result.data.nodeId) {
-        res.status(HttpStatus.CONFLICT).json({ errorMsg: "Cannot connect to self" });
+        res.status(StatusCodes.CONFLICT).json({ errorMsg: "Cannot connect to self" });
       } else if (node.peers[result.data.nodeId]) {
         console.log("Error: already connected to peer: " + peerUrl);
-        res.status(HttpStatus.CONFLICT).json({ errorMsg: "Already connected to peer: " + peerUrl });
+        res.status(StatusCodes.CONFLICT).json({ errorMsg: "Already connected to peer: " + peerUrl });
       } else if (node.chainId !== result.data.chainId) {
         console.log("Error: chain ID cannot be different");
-        res.status(HttpStatus.BAD_REQUEST).json({ errorMsg: "Nodes should have the same chain ID" });
+        res.status(StatusCodes.BAD_REQUEST).json({ errorMsg: "Nodes should have the same chain ID" });
       } else {
         // Remove all peers with the same URL + add the new peer
         for (let nodeId in node.peers) if (node.peers[nodeId] === peerUrl) delete node.peers[nodeId];
@@ -172,7 +172,7 @@ app.post("/peers/connect", (req, res) => {
     })
     .catch(function (error) {
       console.log(`Error connecting to peer: ${peerUrl} failed.`);
-      res.status(HttpStatus.BAD_REQUEST).json({ errorMsg: "Cannot connect to peer: " + peerUrl });
+      res.status(StatusCodes.BAD_REQUEST).json({ errorMsg: "Cannot connect to peer: " + peerUrl });
     });
 });
 app.post("/peers/notify-new-block", (req, res) => {
