@@ -2,8 +2,9 @@ const config = require("./Config");
 const Blockchain = require("./Chain");
 const express = require("express");
 const cors = require("cors");
-const HttpStatus = require("http-status-codes");
+const StatusCodes = require("http-status-codes");
 const bodyParser = require("body-parser");
+const axios = require("axios");
 
 let node = {
   nodeId: "", // identifies the current node
@@ -192,7 +193,7 @@ node.broadcastTransactionToAllPeers = async function (tran) {
 };
 node.syncChainFromPeerInfo = async function (peerChainInfo) {
   try {
-    let thisChainDiff = node.chain.calcCumulativeDifficulty();
+    let thisChainDiff = node.chain.calculateCumulativeDifficulty();
     let peerChainDiff = peerChainInfo.cumulativeDifficulty;
     if (peerChainDiff > thisChainDiff) {
       console.log(
