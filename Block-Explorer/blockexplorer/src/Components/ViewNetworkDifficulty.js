@@ -7,7 +7,7 @@ function ViewNetworkDifficulty() {
 
   const view = () => {
     viewNetworkDifficulty().then((res) => {
-      setDifficulty(res.data.cumulativeDifficulty);
+      setDifficulty(res.data.currentDifficulty);
     });
   };
   return (

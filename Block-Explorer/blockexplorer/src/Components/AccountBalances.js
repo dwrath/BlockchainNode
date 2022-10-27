@@ -4,9 +4,13 @@ import { getAddressBalance } from "../api/index";
 
 function AccountBalances() {
   let [balance, setBalance] = useState();
+  let [userAddress, setUserAddres] = useState();
 
-  let handleSubmit = (e) => {
-    let address = e.target[0].value;
+  let handleChange = (e) => {
+    setUserAddres(e.target.value);
+  };
+  let handleSubmit = () => {
+    let address = userAddress;
     getAddressBalance(address).then((res) => {
       setBalance(res.data);
     });
@@ -15,9 +19,9 @@ function AccountBalances() {
     <div>
       <Navbar />
       <h1>Enter Account Address</h1>
-      <form onSubmit={handleSubmit}>
-        Address: <input type="text" id="textBoxAccountAddress" className="address" />
-        <input type="submit" id="buttonDisplayBalance" value="Display Balance" />
+      <form>
+        Address: <input type="text" id="textBoxAccountAddress" className="address" onChange={handleChange} />
+        <input type="button" id="buttonDisplayBalance" value="Display Balance" onClick={handleSubmit} />
       </form>
       <textarea value={JSON.stringify(balance)} readOnly={true}></textarea>
     </div>
